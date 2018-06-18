@@ -9,40 +9,44 @@ const db = new Sequelize('postgres://localhost:5432/plantr', {
 });
 
 const Gardener = db.define('Gardener', {
-  // title: {
-  //   type: Sequelize.STRING,
-  //   allowNull: false,
-  // },
-  // slug: {
-  //   type: Sequelize.STRING,
-  //   allowNull: false,
-  // },
-  // content: {
-  //   type: Sequelize.TEXT,
-  //   allowNull: false,
-  // },
-  // status: {
-  //   type: Sequelize.ENUM('open', 'closed'),
-  // },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  age: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
 });
 
 const Plot = db.define('Plot', {
-  // name: {
-  //   type: Sequelize.STRING,
-  //   allowNull: false,
-  // },
-  // email: {
-  //   type: Sequelize.STRING,
-  //   allowNull: false,
-  //   validate: {
-  //     isEmail: true,
-  //   },
-  // },
+  size: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  shaded: {
+    type: Sequelize.BOOLEAN,
+  },
 });
 
-const Vegetable = db.define('Vegetable', {});
+const Vegetable = db.define('Vegetable', {
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  color: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  plantedOn: {
+    type: Sequelize.DATEONLY,
+  },
+});
 
 Plot.belongsTo(Gardener);
-Vegetable.belongsTo(Plot);
+Gardener.hasOne(Plot);
+Vegetable.belongsToMany(Plot, { through: 'veggieLocale' });
+Plot.belongsToMany(Vegetable, { through: 'veggieLocale' });
+Gardener.belongsTo(Vegetable, { as: 'favoriteVeggie' });
 
 module.exports = { db, Plot, Gardener, Vegetable };
